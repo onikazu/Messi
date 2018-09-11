@@ -55,9 +55,6 @@ class ParameterServer:
         with tf.variable_scope("parameter_server"):      # スレッド名で重み変数に名前を与え、識別します（Name Space）
             self.model = self._build_model()            # ニューラルネットワークの形を決定
 
-        if os.path.isfile("./weights/param_server_weight.h5"):
-            self.model.load_weights("./weights/param_server_weight.h5")
-
         # serverのパラメータを宣言
         self.weights_params = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope="parameter_server")
         self.optimizer = tf.train.RMSPropOptimizer(LEARNING_RATE, RMSPropDecaly)    # loss関数を最小化していくoptimizerの定義です
@@ -65,9 +62,8 @@ class ParameterServer:
     # 関数名がアンダースコア2つから始まるものは「外部から参照されない関数」、「1つは基本的に参照しない関数」という意味
     def _build_model(self):     # Kerasでネットワークの形を定義します
 
-        if os.path.isfile("./models/param_server_model.json"):
-            model = model_from_json(open('./models/param_server_model.json', 'r').read())
-
+        if os.path.isfile("./models/param_server_model.hdf5"):
+            model = load_model("./models/param_server_model.hdf5")
             return model
         l_input = Input(batch_shape=(None, NUM_STATES))
         l_dense = Dense(16, activation='relu')(l_input)
@@ -360,10 +356,7 @@ class Environment(player11.Player11):
 
 
         # 学習済みの重みを保存
-        parameter_server.model.save_weights('./weights/param_server_weight.h5')
-        # モデルの保存
-        open('./models/param_server_model.json', "w").write(parameter_server.model.to_json())
-
+        parameter_server.model.save('./models/param_server_model.hdf5')
 
         print("save is completed!!!")
 
