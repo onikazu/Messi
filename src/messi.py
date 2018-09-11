@@ -6,6 +6,7 @@ import threading
 import tensorflow as tf
 import time, random, threading
 
+import keras as kr
 from keras.models import *
 from keras.layers import *
 from keras.utils import plot_model
@@ -248,13 +249,13 @@ class Environment(player11.Player11):
         self.reward = 0
         self.agent = Messi(name, parameter_server)    # 環境内で行動するagentを生成
 
-        for i in range(1):
+        for i in range(22):
             teamname = "Messi"
             if i < 11:
                 teamname += "left"
             else:
                 teamname += "right"
-            self.initialize((i % 2 + 1), teamname, "localhost", 6000)
+            self.initialize((i % 11 + 1), teamname, "localhost", 6000)
             self.start()
 
     def run(self):
