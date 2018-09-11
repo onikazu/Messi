@@ -11,6 +11,7 @@ from keras.layers import *
 from keras.utils import plot_model
 from keras import backend as K
 import os
+import sys
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'    # TensorFlow高速化用のワーニングを表示させない
 
 # -- constants of Game
@@ -237,7 +238,7 @@ class Messi():
 # agent+env
 class Environment(player11.Player11):
     total_reward_vec = np.zeros(10)  # 総報酬を10試行分格納して、平均総報酬をもとめる
-    count_trial_each_thread = 0     # 各環境の試行数
+    count_trial_each_thread = int(sys.argv[1])     # 各環境の試行数
 
     def __init__(self, name, thread_type, parameter_server):
         super(Environment, self).__init__()
@@ -260,6 +261,8 @@ class Environment(player11.Player11):
         self.agent.brain.pull_parameter_server()  # ParameterSeverの重みを自身のLocalBrainにコピー
         global frames  # セッション全体での試行数、global変数を書き換える場合は、関数内でglobal宣言が必要です
         global isLearned
+        global SESS
+        global saver
 
         # if (self.thread_type is 'test') and (self.count_trial_each_thread == 0):
         #     self.env.reset()
@@ -335,6 +338,9 @@ class Environment(player11.Player11):
         print("スレッド：" + self.name + "、試行数：" + str(self.count_trial_each_thread) + "、今回のステップ:" + str(
             step) + "、平均ステップ：" + str(self.total_reward_vec.mean()))
 
+        # モデルを保存
+        saver.save(SESS, "./models/model.ckpt")
+
         # スレッドで平均報酬が一定を越えたら終了
         if self.total_reward_vec.mean() > 199:
             isLearned = True
@@ -379,7 +385,12 @@ class Worker_thread:
 
 
 if __name__ == "__main__":
+    saver = tf.train.Saver()
+
     SESS = tf.Session()
+
+    if os.path.isfile("./models/model.ckpt"):
+        saver.restore(SESS, "./models/model.ckpt")
 
     # M1.スレッドを作成します
     with tf.device("/cpu:0"):
