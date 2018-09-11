@@ -190,7 +190,7 @@ class Messi():
             eps = self.eps_start + frames * (self.eps_end - self.eps_start) / self.eps_steps  # linearly interpolate
 
         if random.random() < eps:
-            return random.randint(0, NUM_ACTIONS- 1)   # ランダムに行動
+            return random.randint(0, NUM_ACTIONS - 1)   # ランダムに行動
         else:
             s = np.array([s])
             p = self.brain.predict_p(s)
@@ -269,7 +269,7 @@ class Environment(player11.Player11):
         #     self.env = gym.wrappers.Monitor(self.env, './movie/A3C')  # 動画保存する場合
 
         s = [self.m_dX, self.m_dY, self.m_dBallX, self.m_dBallY]
-        a = random.choice(NUM_ACTIONS)
+        a = random.randint(0, NUM_ACTIONS - 1)
         R = 0
         step = 0
 
