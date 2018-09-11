@@ -288,7 +288,7 @@ class Environment(player11.Player11):
                 if self.m_iVisualTime < self.m_iTime:
                     self.predict(self.m_iVisualTime, self.m_iTime)
 
-                s_ = [self.m_dX, self.dY, self.m_dBallX, self.m_dBallY]
+                s_ = [self.m_dX, self.m_dY, self.m_dBallX, self.m_dBallY]
 
                 self.calc_reward()
                 r = self.reward
