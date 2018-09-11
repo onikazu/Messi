@@ -61,6 +61,11 @@ class ParameterServer:
 
     # 関数名がアンダースコア2つから始まるものは「外部から参照されない関数」、「1つは基本的に参照しない関数」という意味
     def _build_model(self):     # Kerasでネットワークの形を定義します
+
+        if os.path.isfile("./models/param_server_model.json") and os.path.isfile('./weights/param_server_weight.hdf5'):
+            model = model_from_json(open('./models/param_server_model.json', 'r').read())
+            model.load_weights('./weights/param_server_weight.hdf5')
+            return model
         l_input = Input(batch_shape=(None, NUM_STATES))
         l_dense = Dense(16, activation='relu')(l_input)
         out_actions = Dense(NUM_ACTIONS, activation='softmax')(l_dense)
@@ -350,8 +355,11 @@ class Environment(player11.Player11):
         print("スレッド：" + self.name + "、試行数：" + str(self.count_trial_each_thread) + "、今回のステップ:" + str(
             step) + "、平均ステップ：" + str(self.total_reward_vec.mean()))
 
-        # モデルを保存
-        saver.save(SESS, "./models/model.ckpt")
+
+        # モデルの保存
+        open('./models/param_server_model.json', "w").write(parameter_server.model.to_json())
+        # 学習済みの重みを保存
+        parameter_server.model.save_weights('./weights/param_server_weight.hdf5')
 
         # スレッドで平均報酬が一定を越えたら終了
         if self.total_reward_vec.mean() > 199:
@@ -397,7 +405,7 @@ class Worker_thread:
 
 
 if __name__ == "__main__":
-    saver = tf.train.Saver()
+    # saver = tf.train.Saver()
 
     SESS = tf.Session()
 
