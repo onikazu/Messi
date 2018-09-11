@@ -268,7 +268,7 @@ class Environment(player11.Player11):
         global frames  # セッション全体での試行数、global変数を書き換える場合は、関数内でglobal宣言が必要です
         global isLearned
         global SESS
-        global saver
+        global parameter_server
 
         # if (self.thread_type is 'test') and (self.count_trial_each_thread == 0):
         #     self.env.reset()
