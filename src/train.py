@@ -44,6 +44,9 @@ if __name__ == "__main__":
         if not os.path.isdir("./logs"):
             os.mkdir("./logs")
 
+        if not os.path.isdir("./weights"):
+            os.mkdir("./weights")
+
         # クライアントプログラムの実行
         cmd = "python3 {} {}".format(exe_program, episode)
         cliant = subprocess.Popen(cmd.split())
