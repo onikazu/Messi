@@ -269,6 +269,7 @@ class Environment(player11.Player11):
         #     self.env = gym.wrappers.Monitor(self.env, './movie/A3C')  # 動画保存する場合
 
         s = [self.m_dX, self.m_dY, self.m_dBallX, self.m_dBallY]
+        a = random.choice(NUM_ACTIONS)
         R = 0
         step = 0
 
