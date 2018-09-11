@@ -354,17 +354,17 @@ class Environment(player11.Player11):
         print("スレッド：" + self.name + "、試行数：" + str(self.count_trial_each_thread) + "、今回のステップ:" + str(
             step) + "、平均ステップ：" + str(self.total_reward_vec.mean()))
 
+        # スレッドで平均報酬が一定を越えたら終了
+        if self.total_reward_vec.mean() > 199:
+            isLearned = True
+            time.sleep(2.0)     # この間に他のlearningスレッドが止まります
+            self.agent.brain.push_parameter_server()    # この成功したスレッドのパラメータをparameter-serverに渡します
 
         # 学習済みの重みを保存
         parameter_server.model.save('./models/param_server_model.hdf5')
 
         print("save is completed!!!")
 
-        # スレッドで平均報酬が一定を越えたら終了
-        if self.total_reward_vec.mean() > 199:
-            isLearned = True
-            time.sleep(2.0)     # この間に他のlearningスレッドが止まります
-            self.agent.brain.push_parameter_server()    # この成功したスレッドのパラメータをparameter-serverに渡します
 
     def calc_reward(self):
         self.reward = 0
