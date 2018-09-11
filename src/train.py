@@ -54,7 +54,7 @@ if __name__ == "__main__":
         #         break
 
 
-        time.sleep(10)
+        time.sleep(20)
 
 
         print("episode{} is done ".format(episode))
