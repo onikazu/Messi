@@ -397,7 +397,7 @@ class Worker_thread:
 
 
 if __name__ == "__main__":
-    # saver = tf.train.Saver()
+    saver = tf.train.Saver()
 
     SESS = tf.Session()
 
