@@ -359,10 +359,12 @@ class Environment(player11.Player11):
             step) + "、平均ステップ：" + str(self.total_reward_vec.mean()))
 
 
-        # モデルの保存
-        open('./models/param_server_model.json', "w").write(parameter_server.model.to_json())
         # 学習済みの重みを保存
         parameter_server.model.save_weights('./weights/param_server_weight.h5')
+        # モデルの保存
+        open('./models/param_server_model.json', "w").write(parameter_server.model.to_json())
+
+
         print("save is completed!!!")
 
         # スレッドで平均報酬が一定を越えたら終了
