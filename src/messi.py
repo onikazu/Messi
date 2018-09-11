@@ -249,7 +249,7 @@ class Environment(player11.Player11):
         self.reward = 0
         self.agent = Messi(name, parameter_server)    # 環境内で行動するagentを生成
 
-        for i in range(22):
+        for i in range(1):
             teamname = "Messi"
             if i < 11:
                 teamname += "left"
