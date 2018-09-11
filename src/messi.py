@@ -62,9 +62,9 @@ class ParameterServer:
     # 関数名がアンダースコア2つから始まるものは「外部から参照されない関数」、「1つは基本的に参照しない関数」という意味
     def _build_model(self):     # Kerasでネットワークの形を定義します
 
-        if os.path.isfile("./models/param_server_model.json") and os.path.isfile('./weights/param_server_weight.hdf5'):
+        if os.path.isfile("./models/param_server_model.json") and os.path.isfile('./weights/param_server_weight.h5'):
             model = model_from_json(open('./models/param_server_model.json', 'r').read())
-            model.load_weights('./weights/param_server_weight.hdf5')
+            model.load_weights('./weights/param_server_weight.h5')
             return model
         l_input = Input(batch_shape=(None, NUM_STATES))
         l_dense = Dense(16, activation='relu')(l_input)
@@ -359,7 +359,7 @@ class Environment(player11.Player11):
         # モデルの保存
         open('./models/param_server_model.json', "w").write(parameter_server.model.to_json())
         # 学習済みの重みを保存
-        parameter_server.model.save_weights('./weights/param_server_weight.hdf5')
+        parameter_server.model.save_weights('./weights/param_server_weight.h5')
 
         # スレッドで平均報酬が一定を越えたら終了
         if self.total_reward_vec.mean() > 199:
