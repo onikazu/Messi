@@ -289,33 +289,43 @@ class Environment(player11.Player11):
                 if self.m_iVisualTime < self.m_iTime:
                     self.predict(self.m_iVisualTime, self.m_iTime)
 
-                s_ = [self.m_dX, self.m_dY, self.m_dBallX, self.m_dBallY]
+                if self.checkInitialMode():
+                    if self.checkInitialMode():
+                        self.setKickOffPosition()
+                        command = \
+                            "(move " + str(self.m_dKickOffX) + " " + str(self.m_dKickOffY) + ")"
+                        self.m_strCommand = command
 
-                self.calc_reward()
-                r = self.reward
+                if self.m_strPlayMode.startswith("play_on"):
 
-                # Advantageを考慮した報酬と経験を、localBrainにプッシュ
-                self.agent.advantage_push_local_brain(s, a, r, s_)
+                    s_ = [self.m_dX, self.m_dY, self.m_dBallX, self.m_dBallY]
 
-                # 状態関数の更新
-                R += r
-                s = s_
+                    self.calc_reward()
+                    r = self.reward
 
-                if step % Tmax == 0:  # 終了時がTmaxごとに、parameterServerの重みを更新し、それをコピーする
-                    if self.thread_type is 'learning':
-                        self.agent.brain.update_parameter_server()
-                        self.agent.brain.pull_parameter_server()
+                    # Advantageを考慮した報酬と経験を、localBrainにプッシュ
+                    self.agent.advantage_push_local_brain(s, a, r, s_)
 
-                a = self.agent.act(s)
-                # コマンド実行部分
-                self.m_strCommand = ACTIONS[a]
+                    # 状態関数の更新
+                    R += r
+                    s = s_
+
+                    if step % Tmax == 0:  # 終了時がTmaxごとに、parameterServerの重みを更新し、それをコピーする
+                        if self.thread_type is 'learning':
+                            self.agent.brain.update_parameter_server()
+                            self.agent.brain.pull_parameter_server()
+
+                    a = self.agent.act(s)
+                    # コマンド実行部分
+                    self.m_strCommand = ACTIONS[a]
+                    self.send(self.m_strCommand)
+                    frames += 1
+
+                    # 1000step まで行っていたら1episode終了
+                    if frames == 1000:
+                        isLearned = True
+                        break
                 self.send(self.m_strCommand)
-                frames += 1
-
-                # 1000step まで行っていたら1episode終了
-                if frames == 1000:
-                    isLearned = True
-                    break
 
             # 聴覚メッセージの処理
             elif message.startswith("(hear "):
