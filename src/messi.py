@@ -363,6 +363,7 @@ class Environment(player11.Player11):
         open('./models/param_server_model.json', "w").write(parameter_server.model.to_json())
         # 学習済みの重みを保存
         parameter_server.model.save_weights('./weights/param_server_weight.h5')
+        print("save is completed!!!")
 
         # スレッドで平均報酬が一定を越えたら終了
         if self.total_reward_vec.mean() > 199:
